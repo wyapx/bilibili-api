@@ -855,20 +855,9 @@ class LiveDanmaku(AsyncEvent):
         await ws.send_bytes(data)
 
     @staticmethod
-    def __pack(data: bytes, protocol_version: int, datapack_type: int):
-        """
-        打包数据
-        """
-        sendData = bytearray()
-        sendData += struct.pack(">H", 16)
-        assert 0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围 0~2")
-        sendData += struct.pack(">H", protocol_version)
-        assert datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7")
-        sendData += struct.pack(">I", datapack_type)
-        sendData += struct.pack(">I", 1)
-        sendData += data
-        sendData = struct.pack(">I", len(sendData) + 4) + sendData
-        return bytes(sendData)
+    def __pack(data: bytes, protocol_version: int, datapack_type: int) -> bytes:
+        # 12 bytes header + data
+        return struct.pack("!IHHII", 12, 16, protocol_version, datapack_type, 1) + data
 
     @staticmethod
     def __unpack(data: bytes):
