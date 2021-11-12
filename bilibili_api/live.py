@@ -857,7 +857,7 @@ class LiveDanmaku(AsyncEvent):
     @staticmethod
     def __pack(data: bytes, protocol_version: int, datapack_type: int) -> bytes:
         # 12 bytes header + data
-        return struct.pack("!IHHII", 12, 16, protocol_version, datapack_type, 1) + data
+        return struct.pack("!IHHII", 12 + len(data), 16, protocol_version, datapack_type, 1) + data
 
     @staticmethod
     def __unpack(data: bytes):
